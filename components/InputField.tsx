@@ -8,6 +8,8 @@ interface inputFieldProps {
     setValue: Dispatch<SetStateAction<string>>;
     isPasswordShown?: boolean;
     setIsPasswordShown?: Dispatch<SetStateAction<boolean>>;
+    disabled: boolean;
+    error?: string | boolean;
 }
 
 export default function InputField({
@@ -17,10 +19,14 @@ export default function InputField({
     setValue,
     isPasswordShown,
     setIsPasswordShown,
+    disabled,
+    error = false,
 }: inputFieldProps) {
     return (
         <div className="relative bg-blue-300">
             <input
+                className="bg-white"
+                disabled={disabled}
                 type={type}
                 value={value}
                 placeholder={label}
@@ -30,12 +36,15 @@ export default function InputField({
             />
 
             {setIsPasswordShown && (
-                <div
+                <button
+                    disabled={disabled}
                     className="absolute top-0 right-0 grid h-full bg-orange-500 place-content-center"
                     onClick={() => setIsPasswordShown(!isPasswordShown)}>
                     {isPasswordShown ? <AiFillEyeInvisible /> : <AiFillEye />}
-                </div>
+                </button>
             )}
+
+            {error && <div>{error}</div>}
         </div>
     );
 }
