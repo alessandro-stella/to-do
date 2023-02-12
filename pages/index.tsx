@@ -1,12 +1,13 @@
 import MainPage from "@/components/MainPage";
 import SideBar from "@/components/SideBar";
+import { GetServerSideProps } from "next";
 import Head from "next/head";
 
 export default function Home() {
     return (
         <>
             <Head>
-                <title>To-Do App</title>
+                <title>To-Do 4U</title>
                 <meta
                     name="description"
                     content="A to-do app created with typescript"
@@ -25,3 +26,22 @@ export default function Home() {
         </>
     );
 }
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+    const unparsedCookie: string = context.req.cookies["session"] ?? "{}";
+    const userData = JSON.parse(unparsedCookie);
+
+    console.log({ userData });
+    const isLoggedIn = false;
+
+    if (isLoggedIn) {
+        return {
+            props: {},
+        };
+    }
+
+    return {
+        redirect: { destination: "/login", permanent: false },
+        props: { isLoggedIn: false },
+    };
+};
