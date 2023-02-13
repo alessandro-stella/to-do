@@ -24,7 +24,12 @@ export default function App({ Component, pageProps }: AppProps) {
             ).then(async (res) => await res.json());
 
             if (connectionResponse.error) setError(connectionResponse.error);
-            else setIsConnected(connectionResponse.connected);
+            else {
+                console.log(
+                    "====================\nConnected to MongoDB\n===================="
+                );
+                setIsConnected(connectionResponse.connected);
+            }
         };
 
         connectDb();

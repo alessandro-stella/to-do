@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { connect } from "mongoose";
+import mongoose from "mongoose";
 
 export default async function handler(
     _req: NextApiRequest,
@@ -7,7 +7,10 @@ export default async function handler(
 ) {
     const uri = process.env.MONGO_URI;
 
-    const connectionResponse = await connect(uri)
+    mongoose.set("strictQuery", false);
+
+    const connectionResponse = await mongoose
+        .connect(uri)
         .then(() => ({ status: 200, connected: true }))
         .catch((err) => ({
             status: 500,
