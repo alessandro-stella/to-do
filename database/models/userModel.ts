@@ -1,16 +1,18 @@
-import { model, Schema } from "mongoose";
+import { model, models, Schema } from "mongoose";
 import bcrypt from "bcrypt";
 const SALT_FACTOR = 10;
+import crypto from "crypto";
 
-interface User {
+export interface UserType {
+    _id?: string,
     username: string;
     email: string;
     password: string;
     lastLogin: Date | boolean;
-    authCode: string | boolean;
+    authCode: string;
 }
 
-const userSchema = new Schema<User>({
+const userSchema = new Schema<UserType>({
     username: { type: String, require: true },
     email: {
         type: String,
@@ -18,9 +20,20 @@ const userSchema = new Schema<User>({
         index: { unique: true },
     },
     password: { type: String, require: true },
-    lastLogin: { type: Date, default: false },
-    authCode: { type: String, default: false },
+    lastLogin: { type: Schema.Types.Mixed, default: Date.now },
+    authCode: { type: String, default: generateAuthString() },
 });
+
+function calculateTimeBetweenDates(date1: Date, date2: Date): number {
+    const differenceInTime = Math.abs(date2.getTime() - date1.getTime());
+    const differenceInDays = Math.ceil(differenceInTime / (1000 * 3600 * 24));
+
+    return differenceInDays;
+}
+
+function generateAuthString(): string {
+    return crypto.randomBytes(256).toString("hex");
+}
 
 userSchema.pre("save", async function save(next) {
     if (!this.isModified("password")) return next();
@@ -40,12 +53,10 @@ userSchema.methods.validatePassword = async function validatePassword(
     return bcrypt.compare(passwordToCheck, this.password);
 };
 
-function calculateTimeBetweenDates(date1: Date, date2: Date): number {
-    const differenceInTime = Math.abs(date2.getTime() - date1.getTime());
-    const differenceInDays = Math.ceil(differenceInTime / (1000 * 3600 * 24));
-
-    return differenceInDays;
-}
+userSchema.methods.createAuthToken = function createAuthToken() {
+    this.authCode = generateAuthString();
+    this.lastLogin = Date.now;
+};
 
 userSchema.methods.checkUserAuthCode = async function checkUserAuthCode(
     codeToCheck: string
@@ -58,7 +69,7 @@ userSchema.methods.checkUserAuthCode = async function checkUserAuthCode(
 
     if (daysPassed >= 7) {
         this.lastLogin = false;
-        this.authCode = false;
+        this.authCode = "";
 
         return { error: "expired session" };
     }
@@ -66,6 +77,6 @@ userSchema.methods.checkUserAuthCode = async function checkUserAuthCode(
     return true;
 };
 
-const User = model("user", userSchema);
+const User = models.User || model("User", userSchema);
 
 export default User;
