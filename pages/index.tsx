@@ -1,7 +1,9 @@
 import MainPage from "@/components/MainPage";
 import SideBar from "@/components/SideBar";
+import url from "@/config/url";
 import { GetServerSideProps } from "next";
 import Head from "next/head";
+import cookie from "cookie";
 
 export default function Home() {
     return (
@@ -28,13 +30,44 @@ export default function Home() {
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-    const unparsedCookie: string = context.req.cookies["session"] ?? "{}";
-    const userData = JSON.parse(unparsedCookie);
+    const unparsedCookie: string = context.req.cookies["auth"] ?? "none";
 
-    console.log({ userData });
-    const isLoggedIn = false;
+    if (unparsedCookie === "none") {
+        return {
+            redirect: { destination: "/login", permanent: false },
+            props: {},
+        };
+    }
 
-    if (isLoggedIn) {
+    let userData;
+
+    try {
+        userData = JSON.parse(unparsedCookie);
+    } catch (e) {
+        context.res.setHeader(
+            "Set-Cookie",
+            cookie.serialize("auth", "", {
+                httpOnly: true,
+                secure: process.env.NODE_ENV !== "development",
+                maxAge: -1,
+                path: "/",
+            })
+        );
+
+        return {
+            redirect: { destination: "/login", permanent: false },
+            props: {},
+        };
+    }
+
+    const isSessionValid = await fetch(
+        `${url}/api/authentication/checkSession`,
+        {
+            headers: { ...userData },
+        }
+    ).then((res) => res.json());
+
+    if (isSessionValid) {
         return {
             props: {},
         };

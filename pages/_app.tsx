@@ -19,12 +19,18 @@ export default function App({ Component, pageProps }: AppProps) {
 
     useEffect(() => {
         const connectDb = async () => {
+            console.log("Trying to connect...");
+
             const connectionResponse: connectionResponse = await fetch(
                 "/api/connectMongo"
-            ).then(async (res) => await res.json());
+            ).then((res) => res.json());
 
-            if (connectionResponse.error) setError(connectionResponse.error);
-            else {
+            if (connectionResponse.error) {
+                console.log(
+                    "***********************\nError during connection\n***********************"
+                );
+                setError(connectionResponse.error);
+            } else {
                 console.log(
                     "====================\nConnected to MongoDB\n===================="
                 );

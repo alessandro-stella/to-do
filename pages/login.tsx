@@ -3,6 +3,7 @@ import url from "@/config/url";
 import { UserType } from "@/database/models/userModel";
 import { GetServerSideProps } from "next";
 import { useEffect, useState, Dispatch, SetStateAction } from "react";
+import cookie from "cookie";
 
 export default function Login() {
     const [email, setEmail] = useState("");
@@ -238,12 +239,33 @@ export default function Login() {
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-    const unparsedCookie: string = context.req.cookies["auth"] ?? "{}";
-    const userData = JSON.parse(unparsedCookie);
+    const unparsedCookie: string = context.req.cookies["auth"] ?? "none";
 
-    console.log(userData);
+    if (unparsedCookie === "none") {
+        return {
+            props: {},
+        };
+    }
 
-    console.log("BEFORE FETCH");
+    let userData;
+
+    try {
+        userData = JSON.parse(unparsedCookie);
+    } catch (e) {
+        context.res.setHeader(
+            "Set-Cookie",
+            cookie.serialize("auth", "", {
+                httpOnly: true,
+                secure: process.env.NODE_ENV !== "development",
+                maxAge: -1,
+                path: "/",
+            })
+        );
+
+        return {
+            props: {},
+        };
+    }
 
     const isSessionValid = await fetch(
         `${url}/api/authentication/checkSession`,
@@ -252,17 +274,14 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         }
     ).then((res) => res.json());
 
-    const isLoggedIn = false;
-
-    console.log({ isSessionValid });
-
-    if (isLoggedIn) {
+    if (isSessionValid) {
         return {
             redirect: { destination: "/", permanent: false },
             props: {},
         };
     }
 
+    // REMOVE INVALID COOKIE, DO IT IN index.tsx TOOj
     return {
         props: {},
     };

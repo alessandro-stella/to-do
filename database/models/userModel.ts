@@ -4,12 +4,15 @@ const SALT_FACTOR = 10;
 import crypto from "crypto";
 
 export interface UserType {
-    _id?: string,
+    _id?: string;
     username: string;
     email: string;
     password: string;
     lastLogin: Date | boolean;
     authCode: string;
+    validatePassword(passwordToCheck: string): boolean;
+    createAuthToken(): void;
+    checkUserAuthCode(codeToCheck: string): boolean;
 }
 
 const userSchema = new Schema<UserType>({
@@ -56,22 +59,23 @@ userSchema.methods.validatePassword = async function validatePassword(
 userSchema.methods.createAuthToken = function createAuthToken() {
     this.authCode = generateAuthString();
     this.lastLogin = Date.now;
+    this.save();
 };
 
-userSchema.methods.checkUserAuthCode = async function checkUserAuthCode(
+userSchema.methods.checkUserAuthCode = function checkUserAuthCode(
     codeToCheck: string
 ) {
-    if (codeToCheck !== this.authCode) {
-        return { error: "different code" };
-    }
+    const daysPassed = calculateTimeBetweenDates(
+        new Date(this.lastLogin),
+        new Date()
+    );
 
-    const daysPassed = calculateTimeBetweenDates(this.lastLogin, new Date());
-
-    if (daysPassed >= 7) {
+    if (codeToCheck !== this.authCode || daysPassed >= 7) {
         this.lastLogin = false;
         this.authCode = "";
+        this.save();
 
-        return { error: "expired session" };
+        return false;
     }
 
     return true;
