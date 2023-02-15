@@ -1,9 +1,12 @@
 import InputField from "@/components/InputField";
+import connectDB from "@/config/connectDB";
 import url from "@/config/url";
 import { UserType } from "@/database/models/userModel";
-import { GetServerSideProps } from "next";
-import { useEffect, useState, Dispatch, SetStateAction } from "react";
 import cookie from "cookie";
+import mongoose from "mongoose";
+import { GetServerSideProps } from "next";
+import Head from "next/head";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 export default function Login() {
     const [email, setEmail] = useState("");
@@ -148,96 +151,118 @@ export default function Login() {
             return;
         }
 
-        console.log(registerResponse);
-
         setIsLoading(false);
     };
 
     return (
-        <div className="flex w-full min-h-screen p-12 bg-red-500">
-            <div className="flex-1 bg-green-400">IMMAGINE LATERALE</div>
-            <div className="flex items-center justify-center flex-1 bg-white">
-                <div className="flex flex-col w-1/2 max-w-full max-h-full gap-2">
-                    <div className="mb-2 text-5xl font-semibold">
-                        {isRegistering ? "Register" : "Sign in"}
-                    </div>
+        <>
+            <Head>
+                <title>To-Do 4U</title>
 
-                    {isRegistering && (
+                <meta
+                    name="description"
+                    content="A to-do app created with typescript"
+                />
+                <meta
+                    name="viewport"
+                    content="width=device-width, initial-scale=1"
+                />
+                <link rel="icon" href="/favicon.ico" />
+            </Head>
+
+            <div className="flex w-full min-h-screen p-12 bg-red-500">
+                <div className="flex-1 bg-green-400">IMMAGINE LATERALE</div>
+                <div className="flex items-center justify-center flex-1 bg-white">
+                    <div className="flex flex-col w-1/2 max-w-full max-h-full gap-2">
+                        <div className="mb-3 text-5xl font-semibold">
+                            {isRegistering ? "Register" : "Sign in"}
+                        </div>
+
+                        {isRegistering && (
+                            <InputField
+                                label="Username"
+                                type="text"
+                                value={username}
+                                setValue={setUsername}
+                                disabled={isLoading}
+                                error={usernameError}
+                            />
+                        )}
+
                         <InputField
-                            label="Username"
-                            type="text"
-                            value={username}
-                            setValue={setUsername}
-                            disabled={isLoading}
-                            error={usernameError}
-                        />
-                    )}
-
-                    <InputField
-                        label="Email"
-                        type="email"
-                        value={email}
-                        setValue={setEmail}
-                        disabled={isLoading}
-                        error={emailError}
-                    />
-
-                    {isRegistering && (
-                        <InputField
-                            label="Confirm email"
+                            label="Email"
                             type="email"
-                            value={confirmEmail}
-                            setValue={setConfirmEmail}
+                            value={email}
+                            setValue={setEmail}
                             disabled={isLoading}
+                            error={emailError}
                         />
-                    )}
 
-                    <InputField
-                        label="Password"
-                        type={isPasswordShown ? "text" : "password"}
-                        value={password}
-                        setValue={setPassword}
-                        isPasswordShown={isPasswordShown}
-                        setIsPasswordShown={setIsPasswordShown}
-                        disabled={isLoading}
-                        error={passwordError}
-                    />
+                        {isRegistering && (
+                            <InputField
+                                label="Confirm email"
+                                type="email"
+                                value={confirmEmail}
+                                setValue={setConfirmEmail}
+                                disabled={isLoading}
+                            />
+                        )}
 
-                    {isRegistering && (
                         <InputField
-                            label="Confirm password"
+                            label="Password"
                             type={isPasswordShown ? "text" : "password"}
-                            value={confirmPassword}
-                            setValue={setConfirmPassword}
+                            value={password}
+                            setValue={setPassword}
                             isPasswordShown={isPasswordShown}
                             setIsPasswordShown={setIsPasswordShown}
                             disabled={isLoading}
+                            error={passwordError}
                         />
-                    )}
 
-                    {processError && <div>{processError}</div>}
+                        {isRegistering && (
+                            <InputField
+                                label="Confirm password"
+                                type={isPasswordShown ? "text" : "password"}
+                                value={confirmPassword}
+                                setValue={setConfirmPassword}
+                                isPasswordShown={isPasswordShown}
+                                setIsPasswordShown={setIsPasswordShown}
+                                disabled={isLoading}
+                            />
+                        )}
 
-                    <button
-                        disabled={isLoading}
-                        className="p-2 text-white rounded-md bg-stone-800 hover:bg-stone-700 transition"
-                        onClick={isRegistering ? registerUser : loginUser}>
-                        {isRegistering ? "Register" : "Sign in"}
-                    </button>
+                        {processError && (
+                            <div className="text-red-500 text-sm">
+                                {processError}
+                            </div>
+                        )}
 
-                    <div className="flex gap-1 m-auto text-slate-600">
-                        <div>
-                            {isRegistering ? "Already with us?" : "New user?"}
-                        </div>
                         <button
-                            className="border-b-[1px] border-white hover:border-slate-600 transition"
                             disabled={isLoading}
-                            onClick={() => setIsRegistering(!isRegistering)}>
-                            {isRegistering ? "Sign in" : "Register"}
+                            className="p-2 text-white rounded-md bg-stone-800 hover:bg-stone-700 focus:bg-stone-700 transition"
+                            onClick={isRegistering ? registerUser : loginUser}>
+                            {isRegistering ? "Register" : "Sign in"}
                         </button>
+
+                        <div className="flex gap-1 mx-auto mt-2 text-slate-600">
+                            <div>
+                                {isRegistering
+                                    ? "Already with us?"
+                                    : "New user?"}
+                            </div>
+                            <button
+                                className="border-b-[1px] border-white hover:border-slate-600 transition"
+                                disabled={isLoading}
+                                onClick={() =>
+                                    setIsRegistering(!isRegistering)
+                                }>
+                                {isRegistering ? "Sign in" : "Register"}
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </>
     );
 }
 
@@ -268,6 +293,17 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         return {
             props: {},
         };
+    }
+
+    if (mongoose.connection.readyState !== 1) {
+        const dbIsConnected = await connectDB();
+
+        if (!dbIsConnected) {
+            return {
+                redirect: { destination: "/connectionError", permanent: false },
+                props: {},
+            };
+        }
     }
 
     const isSessionValid = await fetch(

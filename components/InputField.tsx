@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, FormEvent } from "react";
+import { Dispatch, FormEvent, SetStateAction } from "react";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 
 interface inputFieldProps {
@@ -25,8 +25,12 @@ export default function InputField({
     return (
         <div className="relative">
             <input
-                className={`bg-white p-1.5 w-full rounded-md border-slate-400 placeholder-slate-400 border-[1px] ${
-                    setIsPasswordShown ? "pr-8" : ""
+                className={`bg-white p-1.5 w-full rounded-md placeholder-slate-400 border-[1px] transition ${
+                    setIsPasswordShown ? "pr-9" : ""
+                } ${
+                    error
+                        ? "border-red-500 outline-red-500"
+                        : "border-slate-400"
                 }`}
                 disabled={disabled}
                 type={type}
@@ -38,20 +42,15 @@ export default function InputField({
             />
 
             {setIsPasswordShown && (
-                <div className="absolute top-0 right-0 grid h-full px-2 place-content-center text-slate-500">
-                    <button
-                        disabled={disabled}
-                        onClick={() => setIsPasswordShown(!isPasswordShown)}>
-                        {isPasswordShown ? (
-                            <AiFillEyeInvisible />
-                        ) : (
-                            <AiFillEye />
-                        )}
-                    </button>
-                </div>
+                <button
+                    className="absolute top-0 right-0 h-[2.37rem] grid text-xl px-2 place-content-center text-slate-500"
+                    disabled={disabled}
+                    onClick={() => setIsPasswordShown(!isPasswordShown)}>
+                    {isPasswordShown ? <AiFillEyeInvisible /> : <AiFillEye />}
+                </button>
             )}
 
-            {error && <div>{error}</div>}
+            {error && <div className="text-sm text-red-500">{error}</div>}
         </div>
     );
 }
