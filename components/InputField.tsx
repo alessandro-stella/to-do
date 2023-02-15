@@ -23,9 +23,11 @@ export default function InputField({
     error = false,
 }: inputFieldProps) {
     return (
-        <div className="relative bg-blue-300">
+        <div className="relative">
             <input
-                className="bg-white"
+                className={`bg-white p-1.5 w-full rounded-md border-slate-400 placeholder-slate-400 border-[1px] ${
+                    setIsPasswordShown ? "pr-8" : ""
+                }`}
                 disabled={disabled}
                 type={type}
                 value={value}
@@ -36,12 +38,17 @@ export default function InputField({
             />
 
             {setIsPasswordShown && (
-                <button
-                    disabled={disabled}
-                    className="absolute top-0 right-0 grid h-full bg-orange-500 place-content-center"
-                    onClick={() => setIsPasswordShown(!isPasswordShown)}>
-                    {isPasswordShown ? <AiFillEyeInvisible /> : <AiFillEye />}
-                </button>
+                <div className="absolute top-0 right-0 grid h-full px-2 place-content-center text-slate-500">
+                    <button
+                        disabled={disabled}
+                        onClick={() => setIsPasswordShown(!isPasswordShown)}>
+                        {isPasswordShown ? (
+                            <AiFillEyeInvisible />
+                        ) : (
+                            <AiFillEye />
+                        )}
+                    </button>
+                </div>
             )}
 
             {error && <div>{error}</div>}

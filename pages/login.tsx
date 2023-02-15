@@ -154,11 +154,13 @@ export default function Login() {
     };
 
     return (
-        <div className="bg-red-500 min-h-screen w-full flex p-12">
-            <div className="bg-green-400 flex-[1]">IMMAGINE LATERALE</div>
-            <div className="bg-violet-400 flex-[1.5] grid place-content-center">
-                <div className="bg-amber-400">
-                    <div>{isRegistering ? "Register" : "Sign in"}</div>
+        <div className="flex w-full min-h-screen p-12 bg-red-500">
+            <div className="flex-1 bg-green-400">IMMAGINE LATERALE</div>
+            <div className="flex items-center justify-center flex-1 bg-white">
+                <div className="flex flex-col w-1/2 max-w-full max-h-full gap-2">
+                    <div className="mb-2 text-5xl font-semibold">
+                        {isRegistering ? "Register" : "Sign in"}
+                    </div>
 
                     {isRegistering && (
                         <InputField
@@ -217,16 +219,17 @@ export default function Login() {
 
                     <button
                         disabled={isLoading}
-                        className="bg-stone-800 p-2 text-white"
+                        className="p-2 text-white rounded-md bg-stone-800 hover:bg-stone-700 transition"
                         onClick={isRegistering ? registerUser : loginUser}>
-                        {isRegistering ? "Register" : "Login"}
+                        {isRegistering ? "Register" : "Sign in"}
                     </button>
 
-                    <div className="flex gap-1">
+                    <div className="flex gap-1 m-auto text-slate-600">
                         <div>
                             {isRegistering ? "Already with us?" : "New user?"}
                         </div>
                         <button
+                            className="border-b-[1px] border-white hover:border-slate-600 transition"
                             disabled={isLoading}
                             onClick={() => setIsRegistering(!isRegistering)}>
                             {isRegistering ? "Sign in" : "Register"}
@@ -281,7 +284,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         };
     }
 
-    // REMOVE INVALID COOKIE, DO IT IN index.tsx TOOj
     return {
         props: {},
     };
