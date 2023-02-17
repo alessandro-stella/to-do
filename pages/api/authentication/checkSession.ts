@@ -10,18 +10,18 @@ export default async function checkSession(
     const { userid: userId, authcode: authCode } = req.headers;
 
     if (typeof userId !== "string" || typeof authCode !== "string") {
-        res.status(status.unauthenticated).json({ authenticated: false });
-        return;
+        return res
+            .status(status.wrongCredentials)
+            .json({ authenticated: false });
     }
 
     const user: UserType | null = await User.findById(userId);
 
     if (!user) {
-        res.status(status.unauthenticated).json({ isAuthenticated: false });
-        return;
+        return res.status(status.wrongCredentials).json(false);
     }
 
-    const isAuthenticated = user.checkUserAuthCode(authCode);
+    const isAuthenticated = await user.checkUserAuthCode(authCode);
 
     if (!isAuthenticated) {
         res.setHeader(
@@ -35,7 +35,7 @@ export default async function checkSession(
         );
     }
 
-    res.status(isAuthenticated ? status.success : status.unauthenticated).json(
-        isAuthenticated
+    res.status(isAuthenticated ? status.success : status.wrongCredentials).json(
+        isAuthenticated ? user._id : false
     );
 }

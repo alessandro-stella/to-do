@@ -7,7 +7,9 @@ import Head from "next/head";
 import connectDB from "@/config/connectDB";
 import mongoose from "mongoose";
 
-export default function Home() {
+export default function Home({ userId }: { userId: string }) {
+    console.log({ userId });
+
     return (
         <>
             <Head>
@@ -32,6 +34,17 @@ export default function Home() {
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
+    if (mongoose.connection.readyState !== 1) {
+        const dbIsConnected = await connectDB();
+
+        if (!dbIsConnected) {
+            return {
+                redirect: { destination: "/connectionError", permanent: false },
+                props: {},
+            };
+        }
+    }
+
     const unparsedCookie: string = context.req.cookies["auth"] ?? "none";
 
     if (unparsedCookie === "none") {
@@ -62,11 +75,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         };
     }
 
-    if (mongoose.connection.readyState !== 1) {
-        const response = await connectDB();
-        console.log({ response });
-    }
-
     const isSessionValid = await fetch(
         `${url}/api/authentication/checkSession`,
         {
@@ -80,8 +88,18 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         };
     }
 
+    context.res.setHeader(
+        "Set-Cookie",
+        cookie.serialize("auth", "", {
+            httpOnly: true,
+            secure: process.env.NODE_ENV !== "development",
+            maxAge: -1,
+            path: "/",
+        })
+    );
+
     return {
         redirect: { destination: "/login", permanent: false },
-        props: { isLoggedIn: false },
+        props: {},
     };
 };

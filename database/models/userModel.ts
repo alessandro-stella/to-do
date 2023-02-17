@@ -11,7 +11,7 @@ export interface UserType {
     lastLogin: Date | boolean;
     authCode: string;
     validatePassword(passwordToCheck: string): boolean;
-    createAuthToken(): void;
+    createAuthToken(): { authCode: string };
     checkUserAuthCode(codeToCheck: string): boolean;
 }
 
@@ -56,24 +56,26 @@ userSchema.methods.validatePassword = async function validatePassword(
     return bcrypt.compare(passwordToCheck, this.password);
 };
 
-userSchema.methods.createAuthToken = function createAuthToken() {
+userSchema.methods.createAuthToken = async function createAuthToken() {
     this.authCode = generateAuthString();
-    this.lastLogin = Date.now;
-    this.save();
+    this.lastLogin = new Date();
+    await this.save();
+
+    return { authCode: this.authCode };
 };
 
-userSchema.methods.checkUserAuthCode = function checkUserAuthCode(
+userSchema.methods.checkUserAuthCode = async function checkUserAuthCode(
     codeToCheck: string
 ) {
     const daysPassed = calculateTimeBetweenDates(
-        new Date(this.lastLogin),
+        new Date(this.lastLogin ?? 0),
         new Date()
     );
 
     if (codeToCheck !== this.authCode || daysPassed >= 7) {
         this.lastLogin = false;
         this.authCode = "";
-        this.save();
+        await this.save();
 
         return false;
     }

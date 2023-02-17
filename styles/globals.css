@@ -1,3 +1,53 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/*========
+- Loader -
+========*/
+
+.loader {
+    font-size: 2em;
+    position: relative;
+    width: 1em;
+    height: 0.75em;
+    background-repeat: no-repeat;
+    background-image: linear-gradient(#fff 0.588em, transparent 0),
+        linear-gradient(#fff 0.588em, transparent 0),
+        linear-gradient(#fff 0.588em, transparent 0),
+        linear-gradient(#fff 0.588em, transparent 0),
+        linear-gradient(#fff 0.588em, transparent 0),
+        linear-gradient(#fff 0.588em, transparent 0);
+    background-position: 0px center, 0.17em center, 0.35em center, 0.53em center,
+        0.7em center, 0.88em center, 1.06em center;
+    animation: rikSpikeRoll 1s linear infinite alternate;
+}
+@keyframes rikSpikeRoll {
+    0% {
+        background-size: 0.12em 0.04em;
+    }
+    16% {
+        background-size: 0.12em 0.588em, 0.12em 0.04em, 0.12em 0.04em,
+            0.12em 0.04em, 0.12em 0.04em, 0.12em 0.04em;
+    }
+    33% {
+        background-size: 0.12em 0.35em, 0.12em 0.588em, 0.12em 0.04em,
+            0.12em 0.04em, 0.12em 0.04em, 0.12em 0.04em;
+    }
+    50% {
+        background-size: 0.12em 0.12em, 0.12em 0.35em, 0.12em 0.588em,
+            0.12em 0.04em, 0.12em 0.04em, 0.12em 0.04em;
+    }
+    66% {
+        background-size: 0.12em 0.04em, 0.12em 0.12em, 0.12em 0.35em,
+            0.12em 0.588em, 0.12em 0.04em, 0.12em 0.04em;
+    }
+    83% {
+        background-size: 0.12em 0.04em, 0.12em 0.04em, 0.12em 0.12em,
+            0.12em 0.35em, 0.12em 0.588em, 0.12em 0.04em;
+    }
+    100% {
+        background-size: 0.12em 0.04em, 0.12em 0.04em, 0.12em 0.04em,
+            0.12em 0.12em, 0.12em 0.35em, 0.12em 0.588em;
+    }
+}

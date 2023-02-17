@@ -1,4 +1,5 @@
 import InputField from "@/components/InputField";
+import Loader from "@/components/Loader";
 import connectDB from "@/config/connectDB";
 import url from "@/config/url";
 import { UserType } from "@/database/models/userModel";
@@ -6,9 +7,12 @@ import cookie from "cookie";
 import mongoose from "mongoose";
 import { GetServerSideProps } from "next";
 import Head from "next/head";
+import { useRouter } from "next/navigation";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 export default function Login() {
+    const router = useRouter();
+
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [isPasswordShown, setIsPasswordShown] = useState(false);
@@ -23,8 +27,8 @@ export default function Login() {
     const [usernameError, setUsernameError] = useState("");
     const [emailError, setEmailError] = useState("");
     const [passwordError, setPasswordError] = useState("");
-    const [errorTimeout, setErrorTimeout] = useState<any>({});
     const [processError, setProcessError] = useState("");
+    const [errorTimeout, setErrorTimeout] = useState<any>({});
 
     // Utility
     const [isLoading, setIsLoading] = useState(false);
@@ -45,12 +49,18 @@ export default function Login() {
         errorDuringRegistration = "There's been an error during the registration process, please try again",
         emailNotFound = "No users associated with this email were found",
         wrongPassword = "The entered password is incorrect",
+        invalidCredentials = "The credentials entered does not meet the required format",
     }
 
     useEffect(() => {
         setUsername("");
         setConfirmEmail("");
         setConfirmPassword("");
+
+        setUsernameError("");
+        setEmailError("");
+        setPasswordError("");
+        setProcessError("");
     }, [isRegistering]);
 
     function removeErrors() {
@@ -122,9 +132,21 @@ export default function Login() {
     const loginUser = async () => {
         setIsLoading(true);
 
-        console.log("login");
+        const loginResponse: UserType | string = await fetch(
+            "/api/authentication/loginUser",
+            { headers: { email, password } }
+        ).then((res) => res.json());
 
-        setIsLoading(false);
+        if (typeof loginResponse === "string") {
+            triggerError(
+                errors[loginResponse as keyof typeof errors],
+                setProcessError
+            );
+            setIsLoading(false);
+            return;
+        }
+
+        router.push("/");
     };
 
     const registerUser = async () => {
@@ -142,16 +164,14 @@ export default function Login() {
 
         if (typeof registerResponse === "string") {
             triggerError(
-                registerResponse === "alreadyRegistered"
-                    ? errors.alreadyRegistered
-                    : errors.errorDuringRegistration,
+                errors[registerResponse as keyof typeof errors],
                 setProcessError
             );
             setIsLoading(false);
             return;
         }
 
-        setIsLoading(false);
+        router.push("/");
     };
 
     return (
@@ -173,7 +193,7 @@ export default function Login() {
             <div className="flex w-full min-h-screen p-12 bg-red-500">
                 <div className="flex-1 bg-green-400">IMMAGINE LATERALE</div>
                 <div className="flex items-center justify-center flex-1 bg-white">
-                    <div className="flex flex-col w-1/2 max-w-full max-h-full gap-2">
+                    <div className="flex flex-col w-2/3 max-w-full max-h-full gap-2">
                         <div className="mb-3 text-5xl font-semibold">
                             {isRegistering ? "Register" : "Sign in"}
                         </div>
@@ -232,16 +252,20 @@ export default function Login() {
                         )}
 
                         {processError && (
-                            <div className="text-red-500 text-sm">
+                            <div className="text-sm text-red-500">
                                 {processError}
                             </div>
                         )}
 
                         <button
                             disabled={isLoading}
-                            className="p-2 text-white rounded-md bg-stone-800 hover:bg-stone-700 focus:bg-stone-700 transition"
+                            className="relative p-2 min-h-[2.25rem] text-white rounded-md bg-stone-800 hover:bg-stone-700 focus:bg-stone-700 transition grid place-content-center"
                             onClick={isRegistering ? registerUser : loginUser}>
-                            {isRegistering ? "Register" : "Sign in"}
+                            {isLoading ? (
+                                <Loader />
+                            ) : (
+                                <>{isRegistering ? "Register" : "Sign in"}</>
+                            )}
                         </button>
 
                         <div className="flex gap-1 mx-auto mt-2 text-slate-600">
@@ -267,6 +291,17 @@ export default function Login() {
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
+    if (mongoose.connection.readyState !== 1) {
+        const dbIsConnected = await connectDB();
+
+        if (!dbIsConnected) {
+            return {
+                redirect: { destination: "/connectionError", permanent: false },
+                props: {},
+            };
+        }
+    }
+
     const unparsedCookie: string = context.req.cookies["auth"] ?? "none";
 
     if (unparsedCookie === "none") {
@@ -295,17 +330,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         };
     }
 
-    if (mongoose.connection.readyState !== 1) {
-        const dbIsConnected = await connectDB();
-
-        if (!dbIsConnected) {
-            return {
-                redirect: { destination: "/connectionError", permanent: false },
-                props: {},
-            };
-        }
-    }
-
     const isSessionValid = await fetch(
         `${url}/api/authentication/checkSession`,
         {
@@ -319,6 +343,16 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
             props: {},
         };
     }
+
+    context.res.setHeader(
+        "Set-Cookie",
+        cookie.serialize("auth", "", {
+            httpOnly: true,
+            secure: process.env.NODE_ENV !== "development",
+            maxAge: -1,
+            path: "/",
+        })
+    );
 
     return {
         props: {},

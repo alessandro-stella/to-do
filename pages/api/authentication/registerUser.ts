@@ -9,39 +9,41 @@ export default async function registerUser(
 ) {
     const { username, email, password } = req.headers;
 
-    const existingUser: UserType | null = await User.findOne({ email });
+    try {
+        const existingUser: UserType | null = await User.findOne({ email });
 
-    if (existingUser) {
-        return res.status(status.alreadyExisting).json("alreadyRegistered");
-    }
+        if (existingUser) {
+            return res.status(status.alreadyExisting).json("alreadyRegistered");
+        }
 
-    const newUser = new User({ username, email, password });
+        const newUser = new User({ username, email, password });
 
-    const saveResponse: UserType | null = await newUser
-        .save()
-        .catch(() => null);
+        const saveResponse: UserType | null = await newUser
+            .save()
+            .catch(() => null);
 
-    if (saveResponse) {
-        return res
-            .setHeader(
-                "Set-Cookie",
-                cookie.serialize(
-                    "auth",
-                    JSON.stringify({
-                        userId: saveResponse._id,
-                        authCode: saveResponse.authCode,
-                    }),
-                    {
-                        httpOnly: true,
-                        secure: process.env.NODE_ENV !== "development",
-                        maxAge: 60 * 60 * 24 * 7,
-                        path: "/",
-                    }
+        if (saveResponse) {
+            return res
+                .setHeader(
+                    "Set-Cookie",
+                    cookie.serialize(
+                        "auth",
+                        JSON.stringify({
+                            userId: saveResponse._id,
+                            authCode: saveResponse.authCode,
+                        }),
+                        {
+                            httpOnly: true,
+                            secure: process.env.NODE_ENV !== "development",
+                            maxAge: 60 * 60 * 24 * 7,
+                            path: "/",
+                        }
+                    )
                 )
-            )
-            .status(status.created)
-            .json(saveResponse);
+                .status(status.created)
+                .json(saveResponse);
+        }
+    } catch (e) {
+        return res.status(status.serverError).json("errorDuringRegistration");
     }
-
-    return res.status(status.serverError).json("notCreated");
 }

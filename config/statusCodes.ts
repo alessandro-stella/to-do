@@ -3,5 +3,6 @@ export enum status {
     created = 201,
     alreadyExisting = 409,
     serverError = 500,
-    unauthenticated = 401,
+    wrongCredentials = 401,
+    resourceNotFound = 404,
 }
