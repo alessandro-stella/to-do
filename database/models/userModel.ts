@@ -13,6 +13,7 @@ export interface UserType {
     validatePassword(passwordToCheck: string): boolean;
     createAuthToken(): { authCode: string };
     checkUserAuthCode(codeToCheck: string): boolean;
+    logoutUser(): void;
 }
 
 const userSchema = new Schema<UserType>({
@@ -81,6 +82,12 @@ userSchema.methods.checkUserAuthCode = async function checkUserAuthCode(
     }
 
     return true;
+};
+
+userSchema.methods.logoutUser = async function logoutUser() {
+    this.lastLogin = false;
+    this.authCode = "";
+    await this.save();
 };
 
 const User = models.User || model("User", userSchema);
