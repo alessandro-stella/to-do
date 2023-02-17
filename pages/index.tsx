@@ -26,7 +26,7 @@ export default function Home({ userId }: { userId: string }) {
             </Head>
 
             <div className="bg-red-500 min-h-screen w-full flex p-12">
-                <SideBar />
+                <SideBar userId={userId} />
                 <MainPage />
             </div>
         </>
@@ -84,7 +84,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
     if (isSessionValid) {
         return {
-            props: {},
+            props: { userId: userData.userId },
         };
     }
 

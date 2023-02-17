@@ -10,9 +10,7 @@ export default async function checkSession(
     const { userid: userId, authcode: authCode } = req.headers;
 
     if (typeof userId !== "string" || typeof authCode !== "string") {
-        return res
-            .status(status.wrongCredentials)
-            .json({ authenticated: false });
+        return res.status(status.wrongCredentials).json(false);
     }
 
     const user: UserType | null = await User.findById(userId);
@@ -36,6 +34,6 @@ export default async function checkSession(
     }
 
     res.status(isAuthenticated ? status.success : status.wrongCredentials).json(
-        isAuthenticated ? user._id : false
+        isAuthenticated ? user._id?.toString() : false
     );
 }
