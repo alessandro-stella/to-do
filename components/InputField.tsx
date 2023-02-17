@@ -25,13 +25,9 @@ export default function InputField({
     return (
         <div className="relative">
             <input
-                className={`bg-white p-1.5 w-full rounded-md placeholder-slate-400 border-[1px] transition ${
+                className={`bg-customGrey p-1.5 w-full rounded-md placeholder-customViolet-800 placeholder-opacity-50 border-[1px] focus:border-customViolet-800 text-white ${
                     setIsPasswordShown ? "pr-9" : ""
-                } ${
-                    error
-                        ? "border-red-500 outline-red-500"
-                        : "border-slate-400"
-                }`}
+                } ${error ? "border-red-500" : "border-customGrey"}`}
                 disabled={disabled}
                 type={type}
                 value={value}
@@ -43,7 +39,7 @@ export default function InputField({
 
             {setIsPasswordShown && (
                 <button
-                    className="absolute top-0 right-0 h-[2.37rem] grid text-xl px-2 place-content-center text-slate-500"
+                    className="absolute top-0 right-0 h-[2.37rem] grid text-xl px-2 place-content-center text-customViolet-800 opacity-50"
                     disabled={disabled}
                     onClick={() => setIsPasswordShown(!isPasswordShown)}>
                     {isPasswordShown ? <AiFillEyeInvisible /> : <AiFillEye />}

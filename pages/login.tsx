@@ -190,11 +190,11 @@ export default function Login() {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
 
-            <div className="flex w-full min-h-screen p-12 bg-red-500">
+            <div className="flex w-full min-h-screen p-12 bg-customBlack">
                 <div className="flex-1 bg-green-400">IMMAGINE LATERALE</div>
-                <div className="flex items-center justify-center flex-1 bg-white">
+                <div className="flex items-center justify-center flex-1">
                     <div className="flex flex-col w-2/3 max-w-full max-h-full gap-2">
-                        <div className="mb-3 text-5xl font-semibold">
+                        <div className="mb-3 text-5xl font-semibold text-white">
                             {isRegistering ? "Register" : "Sign in"}
                         </div>
 
@@ -259,7 +259,7 @@ export default function Login() {
 
                         <button
                             disabled={isLoading}
-                            className="relative p-2 min-h-[2.25rem] text-white rounded-md bg-stone-800 hover:bg-stone-700 focus:bg-stone-700 transition grid place-content-center"
+                            className="relative p-2 min-h-[2.25rem] text-white rounded-md bg-customViolet-600 hover:bg-customViolet-700 focus:bg-customViolet-700 transition grid place-content-center"
                             onClick={isRegistering ? registerUser : loginUser}>
                             {isLoading ? (
                                 <Loader />
@@ -268,14 +268,15 @@ export default function Login() {
                             )}
                         </button>
 
-                        <div className="flex gap-1 mx-auto mt-2 text-slate-600">
+                        <div className="flex gap-1 mx-auto mt-2 text-slate-200">
                             <div>
                                 {isRegistering
                                     ? "Already with us?"
                                     : "New user?"}
                             </div>
+
                             <button
-                                className="border-b-[1px] border-white hover:border-slate-600 transition"
+                                className="border-b-[1px] border-customGrey hover:border-slate-200 transition"
                                 disabled={isLoading}
                                 onClick={() =>
                                     setIsRegistering(!isRegistering)
