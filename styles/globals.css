@@ -37,6 +37,7 @@
         0.7em center, 0.88em center, 1.06em center;
     animation: rikSpikeRoll 1s linear infinite alternate;
 }
+
 @keyframes rikSpikeRoll {
     0% {
         background-size: 0.12em 0.04em;
@@ -65,4 +66,52 @@
         background-size: 0.12em 0.04em, 0.12em 0.04em, 0.12em 0.04em,
             0.12em 0.12em, 0.12em 0.35em, 0.12em 0.588em;
     }
+}
+
+/*==========================
+- Mesh gradient background -
+==========================*/
+
+.bg-meshGradient {
+    background-color: hsl(250, 65%, 05%);
+    background-image: radial-gradient(
+            at 62% 42%,
+            hsl(250, 65%, 15%) 0,
+            hsla(72, 95%, 53%, 0) 50%
+        ),
+        radial-gradient(
+            at 10% 77%,
+            hsl(250, 65%, 25%) 0,
+            hsla(307, 90%, 53%, 0) 50%
+        ),
+        radial-gradient(
+            at 100% 57%,
+            hsl(250, 65%, 45%) 0,
+            hsla(44, 93%, 51%, 0) 50%
+        ),
+        radial-gradient(
+            at 68% 51%,
+            hsl(250, 65%, 85%) 0,
+            hsla(299, 85%, 69%, 0) 50%
+        ),
+        radial-gradient(
+            at 90% 67%,
+            hsl(250, 65%, 55%) 0,
+            hsla(167, 95%, 70%, 0) 50%
+        ),
+        radial-gradient(
+            at 55% 27%,
+            hsl(250, 65%, 75%) 0,
+            hsla(315, 87%, 60%, 0) 50%
+        ),
+        radial-gradient(
+            at 67% 4%,
+            hsl(250, 65%, 60%) 0,
+            hsla(189, 92%, 64%, 0) 50%
+        ),
+        radial-gradient(
+            at 47% 39%,
+            hsl(250, 65%, 90%) 0,
+            hsla(191, 89%, 60%, 0) 50%
+        );
 }

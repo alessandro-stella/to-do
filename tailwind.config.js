@@ -8,7 +8,7 @@ module.exports = {
     theme: {
         extend: {
             colors: {
-                customBlack: "#1E1A20",
+                customBlack: "hsl(280, 12%, 8%)",
                 customGrey: "#36323C",
                 customViolet: {
                     50:"hsl(250, 65%, 05%)",

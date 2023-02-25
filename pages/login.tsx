@@ -1,6 +1,6 @@
 import InputField from "@/components/InputField";
 import Loader from "@/components/Loader";
-import connectDB from "@/config/connectDB";
+import connectDB from "@/database/connectDB";
 import url from "@/config/url";
 import { UserType } from "@/database/models/userModel";
 import cookie from "cookie";
@@ -9,6 +9,7 @@ import { GetServerSideProps } from "next";
 import Head from "next/head";
 import { useRouter } from "next/navigation";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import Image from "next/image";
 
 export default function Login() {
     const router = useRouter();
@@ -187,15 +188,48 @@ export default function Login() {
                     name="viewport"
                     content="width=device-width, initial-scale=1"
                 />
-                <link rel="icon" href="/favicon.ico" />
+                <link rel="icon" href="/favicon.svg" />
             </Head>
 
-            <div className="flex w-full min-h-screen p-12 bg-customBlack">
-                <div className="flex-1 bg-green-400">IMMAGINE LATERALE</div>
-                <div className="flex items-center justify-center flex-1">
-                    <div className="flex flex-col w-2/3 max-w-full max-h-full gap-2">
-                        <div className="mb-3 text-5xl font-semibold text-white">
+            <div className="grid w-full min-h-screen grid-cols-12 gap-8 px-32 py-16 bg-meshGradient">
+                <div className="flex-1 lg:col-start-2 lg:col-end-7 hidden lg:block my-auto text-white bg-opacity-50">
+                    <div className="flex items-center gap-4 mb-2">
+                        <div className="relative h-16 aspect-square">
+                            <Image
+                                src="/favicon.svg"
+                                alt="To-Do 4U"
+                                fill
+                                className="h-full aspect-square"
+                            />
+                        </div>
+                        <div className="text-4xl">To-Do 4U</div>
+                    </div>
+
+                    <div className="text-lg">
+                        Sign in or register with your account
+                    </div>
+                </div>
+
+                <div className="flex items-center justify-center lg:col-start-7 lg:col-end-12 col-span-full p-12 my-auto rounded-md shadow-xl h-fit bg-customViolet-950">
+                    <div className="flex flex-col w-full h-full gap-2">
+                        <div className="text-[2.5rem] font-semibold leading-10">
                             {isRegistering ? "Register" : "Sign in"}
+                        </div>
+
+                        <div className="flex gap-1 mb-2">
+                            <div>
+                                {isRegistering
+                                    ? "Already with us?"
+                                    : "New user?"}
+                            </div>
+                            <button
+                                className="border-b-[1px] border-customViolet-950 hover:border-customViolet-600 transition text-customViolet-600"
+                                disabled={isLoading}
+                                onClick={() =>
+                                    setIsRegistering(!isRegistering)
+                                }>
+                                {isRegistering ? "Sign in" : "Register"}
+                            </button>
                         </div>
 
                         {isRegistering && (
@@ -208,7 +242,6 @@ export default function Login() {
                                 error={usernameError}
                             />
                         )}
-
                         <InputField
                             label="Email"
                             type="email"
@@ -217,7 +250,6 @@ export default function Login() {
                             disabled={isLoading}
                             error={emailError}
                         />
-
                         {isRegistering && (
                             <InputField
                                 label="Confirm email"
@@ -227,7 +259,6 @@ export default function Login() {
                                 disabled={isLoading}
                             />
                         )}
-
                         <InputField
                             label="Password"
                             type={isPasswordShown ? "text" : "password"}
@@ -238,7 +269,6 @@ export default function Login() {
                             disabled={isLoading}
                             error={passwordError}
                         />
-
                         {isRegistering && (
                             <InputField
                                 label="Confirm password"
@@ -250,16 +280,14 @@ export default function Login() {
                                 disabled={isLoading}
                             />
                         )}
-
                         {processError && (
                             <div className="text-sm text-red-500">
                                 {processError}
                             </div>
                         )}
-
                         <button
                             disabled={isLoading}
-                            className="relative p-2 min-h-[2.25rem] text-white rounded-md bg-customViolet-600 hover:bg-customViolet-700 focus:bg-customViolet-700 transition grid place-content-center"
+                            className="relative p-2 min-h-[2.25rem] text-white rounded-md bg-customViolet-600 hover:bg-customViolet-700 focus:bg-customViolet-700 select-none transition grid place-content-center"
                             onClick={isRegistering ? registerUser : loginUser}>
                             {isLoading ? (
                                 <Loader />
@@ -267,23 +295,6 @@ export default function Login() {
                                 <>{isRegistering ? "Register" : "Sign in"}</>
                             )}
                         </button>
-
-                        <div className="flex gap-1 mx-auto mt-2 text-slate-200">
-                            <div>
-                                {isRegistering
-                                    ? "Already with us?"
-                                    : "New user?"}
-                            </div>
-
-                            <button
-                                className="border-b-[1px] border-customGrey hover:border-slate-200 transition"
-                                disabled={isLoading}
-                                onClick={() =>
-                                    setIsRegistering(!isRegistering)
-                                }>
-                                {isRegistering ? "Sign in" : "Register"}
-                            </button>
-                        </div>
                     </div>
                 </div>
             </div>

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1413.28 1413.28"><defs>
+<style>
+.cls-1{fill:#fff;}
+.cls-2{fill:url(#Sfumatura_senza_nome_14);}
+
+@media (prefers-color-scheme: light) {
+    .cls-1{fill:#1E1A20;}
+}
+
+</style>
+<linearGradient id="Sfumatura_senza_nome_14" x1="313.69" y1="313.69" x2="1099.59" y2="1099.59" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#9181e4"/><stop offset="0.04" stop-color="#8c7be3"/><stop offset="0.17" stop-color="#8270e1"/><stop offset="0.3" stop-color="#7f6ce0"/><stop offset="0.59" stop-color="#482dd2"/><stop offset="1" stop-color="#2b1b7e"/></linearGradient></defs><rect class="cls-1" width="1413.28" height="1413.28" rx="312.92"/><circle class="cls-2" cx="706.64" cy="706.64" r="555.72"/><polygon class="cls-1" points="608.24 972.48 1030.64 550.08 937.84 455.68 598.64 782.08 464.24 652.48 373.04 742.08 608.24 972.48"/></svg>

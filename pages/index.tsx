@@ -4,7 +4,7 @@ import url from "@/config/url";
 import { GetServerSideProps } from "next";
 import cookie from "cookie";
 import Head from "next/head";
-import connectDB from "@/config/connectDB";
+import connectDB from "@/database/connectDB";
 import mongoose from "mongoose";
 
 export default function Home({ userId }: { userId: string }) {
@@ -22,7 +22,7 @@ export default function Home({ userId }: { userId: string }) {
                     name="viewport"
                     content="width=device-width, initial-scale=1"
                 />
-                <link rel="icon" href="/favicon.ico" />
+                <link rel="icon" href="/favicon.svg" />
             </Head>
 
             <div className="bg-red-500 min-h-screen w-full flex p-12">

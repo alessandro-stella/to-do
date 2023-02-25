@@ -11,11 +11,10 @@ export default async function handler(
 
     const connectionResponse = await mongoose
         .connect(uri)
-        .then(() => ({ status: 200, connected: true }))
+        .then(() => ({ status: 200 }))
         .catch((err) => ({
             status: 500,
             error: err.message,
-            connected: false,
         }));
 
     res.status(connectionResponse.status).json(connectionResponse);
