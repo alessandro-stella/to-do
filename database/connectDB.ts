@@ -1,4 +1,4 @@
-import url from "./url";
+import url from "../config/url";
 
 export default async function () {
     console.log("Trying to connect...");
@@ -12,10 +12,10 @@ export default async function () {
             "***********************\nError during connection\n***********************"
         );
         return false;
-    } else {
-        console.log(
-            "====================\nConnected to MongoDB\n===================="
-        );
-        return true;
     }
+
+    console.log(
+        "====================\nConnected to MongoDB\n===================="
+    );
+    return true;
 }
